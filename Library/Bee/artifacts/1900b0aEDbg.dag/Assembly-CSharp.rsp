@@ -354,14 +354,21 @@
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Unity.VSCode.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.UI.ref.dll"
+"Assets/Scripts/AttackCheck.cs"
+"Assets/Scripts/AttackControl.cs"
+"Assets/Scripts/BackGroundMove.cs"
 "Assets/Scripts/BlockControl.cs"
 "Assets/Scripts/BlockCreator.cs"
 "Assets/Scripts/CameraControl.cs"
+"Assets/Scripts/CoinControl.cs"
 "Assets/Scripts/CoinCreator.cs"
 "Assets/Scripts/GameRoot.cs"
 "Assets/Scripts/LevelControl.cs"
 "Assets/Scripts/MapCreator.cs"
+"Assets/Scripts/MonsterControl.cs"
+"Assets/Scripts/MonsterCreator.cs"
 "Assets/Scripts/PlayerControl.cs"
+"Assets/Scripts/TitleScript.cs"
 -langversion:9.0
 
 /deterministic

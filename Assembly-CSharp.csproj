@@ -62,8 +62,15 @@
     <Compile Include="Assets\Scripts\GameRoot.cs" />
     <Compile Include="Assets\Scripts\MapCreator.cs" />
     <Compile Include="Assets\Scripts\CameraControl.cs" />
-    <Compile Include="Assets\Scripts\BlockCreator.cs" />
     <Compile Include="Assets\Scripts\CoinCreator.cs" />
+    <Compile Include="Assets\Scripts\BlockCreator.cs" />
+    <Compile Include="Assets\Scripts\CoinControl.cs" />
+    <Compile Include="Assets\Scripts\MonsterCreator.cs" />
+    <Compile Include="Assets\Scripts\MonsterControl.cs" />
+    <Compile Include="Assets\Scripts\TitleScript.cs" />
+    <Compile Include="Assets\Scripts\AttackControl.cs" />
+    <Compile Include="Assets\Scripts\AttackCheck.cs" />
+    <Compile Include="Assets\Scripts\BackGroundMove.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\level_data.txt" />

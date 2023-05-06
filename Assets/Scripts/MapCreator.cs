@@ -32,6 +32,8 @@ public class MapCreator : MonoBehaviour
     private FloorBlock last_block;          // 마지막에 생성한 블록.
     private PlayerControl player = null;    // 씬상의 Player를 보관.
     private BlockCreator block_creator;     // BlockCreator를 보관.
+    private CoinCreator coin_creator;       // CoinCreator를 보관.
+    private MonsterCreator monster_creator; // MonsterCreator를 보관.
 
     public TextAsset level_data_text = null;
     private GameRoot game_root = null;
@@ -42,6 +44,9 @@ public class MapCreator : MonoBehaviour
         this.player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControl>();
         this.last_block.is_created = false;
         this.block_creator = this.gameObject.GetComponent<BlockCreator>();
+
+        this.coin_creator = this.gameObject.GetComponent<CoinCreator>();
+        this.monster_creator = this.gameObject.GetComponent<MonsterCreator>();
 
         this.level_control = gameObject.AddComponent<LevelControl>();
         this.level_control.initialize();
@@ -104,8 +109,18 @@ public class MapCreator : MonoBehaviour
         // 지금 만들 블록이 바닥이면 (지금 만들 블록이 구멍이라면)
         if (current.block_type == Block.TYPE.FLOOR)
         {
+            Vector3 on_block_position = block_position + new Vector3(0.0f, 1.0f, 0.0f);
+
             // block_position의 위치에 블록을 실제로 생성.
             this.block_creator.createBlock(block_position);
+            if (!this.createMonster(on_block_position))
+            {
+                this.coin_creator.createCoin(on_block_position);
+            }
+        }
+        else
+        {
+            this.monster_creator.monster_count = 0;
         }
 
         this.last_block.position = block_position; // last_block의 위치를 이번 위치로 갱신.
@@ -124,5 +139,17 @@ public class MapCreator : MonoBehaviour
             ret = true; // 반환값을 true(사라져도 좋다)로
         }
         return (ret); // 판정 결과를 돌려줌.
+    }
+
+    public bool createMonster(Vector3 monster_position)
+    {
+        int result = Random.Range(0, 7);
+        if (result >= 6 && monster_creator.monster_count == 0)
+        {
+            monster_creator.createMonster(monster_position);
+            return true;
+        }
+
+        return false;
     }
 }

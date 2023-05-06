@@ -45,7 +45,7 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.transform.Translate(new Vector3(0.0f, 0.0f, 3.0f * Time.deltaTime));
+        //this.transform.Translate(new Vector3(0.0f, 0.0f, 3.0f * Time.deltaTime));
 
         Vector3 velocity = this.GetComponent<Rigidbody>().velocity; // 속도를 설정.
         this.current_speed = this.level_control.getPlayerSpeed();
@@ -66,7 +66,7 @@ public class PlayerControl : MonoBehaviour
         this.step_timer += Time.deltaTime; // 경과 시간을 진행한다.
 
         // 버튼이 눌렸으면.
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             this.click_timer = 0.0f; // 타이머를 리셋.
         }
@@ -164,7 +164,7 @@ public class PlayerControl : MonoBehaviour
                 do
                 {
                     // '버튼이 떨어진 순간'이 아니면.
-                    if (!Input.GetMouseButtonUp(0))
+                    if (!Input.GetKeyUp(KeyCode.Space))
                     {
                         break; // 아무것도 하지 않고 루프를 빠져나간다.
                     }
@@ -230,5 +230,18 @@ public class PlayerControl : MonoBehaviour
             this.is_landed = true;
         } while (false);
         // 루프의 탈출구.
+    }
+
+    public bool isPlayEnd()
+    {
+        // 게임이 끝났는지 판정
+        bool ret = false;
+        switch (this.step)
+        {
+            case STEP.MISS: // MISS 상태라면,
+                ret = true; // '죽었어요'(true)라고 알려줌
+                break;
+        }
+        return (ret);
     }
 }
