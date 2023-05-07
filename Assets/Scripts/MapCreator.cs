@@ -121,6 +121,7 @@ public class MapCreator : MonoBehaviour
         else
         {
             this.monster_creator.monster_count = 0;
+            this.block_creator.block_count = 0;
         }
 
         this.last_block.position = block_position; // last_block의 위치를 이번 위치로 갱신.
@@ -144,7 +145,7 @@ public class MapCreator : MonoBehaviour
     public bool createMonster(Vector3 monster_position)
     {
         int result = Random.Range(0, 7);
-        if (result >= 6 && monster_creator.monster_count == 0)
+        if (result >= 6 && monster_creator.monster_count == 0 && block_creator.block_count >= 2)
         {
             monster_creator.createMonster(monster_position);
             return true;

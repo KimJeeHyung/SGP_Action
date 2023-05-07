@@ -111,3 +111,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map_creator: {fileID: 0}
+  Player_HP: {fileID: 6453708148724710206, guid: 6711ced29e0818448b1456fa904fa838, type: 3}

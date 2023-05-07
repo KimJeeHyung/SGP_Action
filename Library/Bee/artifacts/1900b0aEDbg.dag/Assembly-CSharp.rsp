@@ -362,12 +362,17 @@
 "Assets/Scripts/CameraControl.cs"
 "Assets/Scripts/CoinControl.cs"
 "Assets/Scripts/CoinCreator.cs"
+"Assets/Scripts/CoinText.cs"
+"Assets/Scripts/DistanceData.cs"
+"Assets/Scripts/DistanceText.cs"
 "Assets/Scripts/GameRoot.cs"
+"Assets/Scripts/HPController.cs"
 "Assets/Scripts/LevelControl.cs"
 "Assets/Scripts/MapCreator.cs"
 "Assets/Scripts/MonsterControl.cs"
 "Assets/Scripts/MonsterCreator.cs"
 "Assets/Scripts/PlayerControl.cs"
+"Assets/Scripts/RecordCollector.cs"
 "Assets/Scripts/TitleScript.cs"
 -langversion:9.0
 

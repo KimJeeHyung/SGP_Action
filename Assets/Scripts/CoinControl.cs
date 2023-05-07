@@ -6,11 +6,14 @@ public class CoinControl : MonoBehaviour
 {
     public MapCreator map_creator = null; // MapCreator를 보관하는 변수.
 
+    private RecordCollector recordCollector;
+
     // Start is called before the first frame update
     void Start()
     {
         // MapCreator를 가져와서 멤버 변수 map_creator에 보관.
         map_creator = GameObject.Find("GameRoot").GetComponent<MapCreator>();
+        recordCollector = GameObject.FindObjectOfType<RecordCollector>();
     }
 
     // Update is called once per frame
@@ -22,10 +25,12 @@ public class CoinControl : MonoBehaviour
             GameObject.Destroy(this.gameObject); // 자기 자신을 삭제.
         }
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
         {
+            recordCollector.Coin_Num += 1;
             GameObject.Destroy(this.gameObject);
         }
     }

@@ -45,7 +45,7 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //this.transform.Translate(new Vector3(0.0f, 0.0f, 3.0f * Time.deltaTime));
+        this.transform.Translate(new Vector3(current_speed* Time.deltaTime, 0.0f, 0.0f));
 
         Vector3 velocity = this.GetComponent<Rigidbody>().velocity; // 속도를 설정.
         this.current_speed = this.level_control.getPlayerSpeed();
@@ -145,7 +145,7 @@ public class PlayerControl : MonoBehaviour
         {
             case STEP.RUN: // 달리는 중일 때.
                 // 속도를 높인다.
-                velocity.x += PlayerControl.ACCELERATION * Time.deltaTime;
+                //velocity.x += PlayerControl.ACCELERATION * Time.deltaTime;
                 // 속도가 최고 속도 제한을 넘으면.
                 //if (Mathf.Abs(velocity.x) > PlayerControl.SPEED_MAX)
                 //{
@@ -180,7 +180,7 @@ public class PlayerControl : MonoBehaviour
                     }
                     // 버튼이 떨어져 있고 상승 중이라면 감속 시작.
                     // 점프의 상승은 여기서 끝.
-                    velocity.y *= JUMP_KEY_RELEASE_REDUCE;
+                    //velocity.y *= JUMP_KEY_RELEASE_REDUCE;
 
                     this.is_key_released = true;
                 } while (false);
