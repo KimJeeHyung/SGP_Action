@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "347002562160",
+    "project_id": "sgptest-6f3a0",
+    "storage_bucket": "sgptest-6f3a0.appspot.com",
+    "firebase_url": "https://sgptest-6f3a0-default-rtdb.firebaseio.com/"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347002562160:android:ed8457730475ab16c0b6b5",
+        "android_client_info": {
+          "package_name": "com.firebase.SGPTest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347002562160-q9un0j8m2ql4ogrgnoiphb4veakk3li2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsUK3_mpW4OYeSG9pJNE70hQOMTEAcqjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347002562160-q9un0j8m2ql4ogrgnoiphb4veakk3li2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

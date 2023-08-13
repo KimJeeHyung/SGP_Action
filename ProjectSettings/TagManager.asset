@@ -5,6 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - Monster
+  - Progress
+  - SkillSlot
+  - Power
+  - BossBlock
+  - Boss
+  - ClearBlock
+  - TitleFloor
+  - BossAttackSequence
+  - POSTPROCESSING
+  - Fireball
   layers:
   - Default
   - TransparentFX
@@ -13,8 +23,8 @@ TagManager:
   - Water
   - UI
   - Background
-  - 
-  - 
+  - postProcessing
+  - Monster
   - 
   - 
   - 

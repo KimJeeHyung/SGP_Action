@@ -1,0 +1,3 @@
+rep "SGP_ActionGame@Qtaro5302@cloud"
+  path "/"
+    smartbranch "/main"

@@ -29,4 +29,12 @@ public class BlockCreator : MonoBehaviour
         go.transform.position = block_position; // 블록의 위치를 이동.
         this.block_count++; // 블록의 개수를 증가. 
     }
+
+    public void createClearBlock(Vector3 block_position)
+    {
+        // 블록을 생성하고 go에 보관한다.
+        GameObject go = GameObject.Instantiate(this.blockPrefabs[2]) as GameObject;
+        go.transform.position = block_position; // 블록의 위치를 이동.
+        this.block_count++; // 블록의 개수를 증가. 
+    }
 }

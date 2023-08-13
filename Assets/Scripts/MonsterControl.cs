@@ -7,15 +7,9 @@ public class MonsterControl : MonoBehaviour
 {
     public MapCreator map_creator = null; // MapCreator를 보관하는 변수.
 
-
-    private Slider Player_HP;
-
     // Start is called before the first frame update
     void Start()
     {
-
-        Player_HP = GameObject.Find("PlayerHP").GetComponent<Slider>();
-
         // MapCreator를 가져와서 멤버 변수 map_creator에 보관.
         map_creator = GameObject.Find("GameRoot").GetComponent<MapCreator>();
     }
@@ -30,14 +24,11 @@ public class MonsterControl : MonoBehaviour
         }
     }
 
-    public void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Player_HP.value -= 0.1f;
-            Debug.Log("체력 감소됨");
+            PlayerStat.Instance.SetHP(-10f);
         }
     }
-
-   
 }

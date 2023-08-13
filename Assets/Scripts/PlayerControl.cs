@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -25,31 +27,79 @@ public class PlayerControl : MonoBehaviour
     public STEP next_step = STEP.NONE;      // Player의 다음 상태.
     public float step_timer = 0.0f;         // 경과 시간.
     private bool is_landed = false;         // 착지했는가.
-    private bool is_colided = false;        // 뭔가와 충돌했는가.
+    //private bool is_colided = false;        // 뭔가와 충돌했는가.
     private bool is_key_released = false;   // 버튼이 떨어졌는가.
+
+
 
     public static float NARAKU_HEIGHT = -5.0f;
 
     public float current_speed = 0.0f;          // 현재 속도.
     public LevelControl level_control = null;   // LevelControl이 저장됨.
+    public GameRoot game_root = null; // GameRoot가 저장됨.
+    public BlockCreator block_creator = null;
 
     private float click_timer = 1.0f;       // 버튼이 눌린 후의 시간
     private float CLICK_GRACE_TIME = 0.5f;  // 점프하고 싶은 의사를 받아들일 시간
+
+    public float current_time = 0.0f;
+    public bool stage_cleared = false;
+    public int current_level = 0;
+
+    public int clearBlockCount = 0;
+
+    [SerializeField]
+    private int jump_count = 0;
+
+
+    [SerializeField]
+    private Text Event_Text; 
 
     // Start is called before the first frame update
     void Start()
     {
         this.next_step = STEP.RUN;
+        block_creator = GameObject.Find("GameRoot").GetComponent<BlockCreator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(PlayerStat.Instance.GetHP() <= 0f)
+        {
+            SceneManager.LoadScene("TitleScene");
+        }
+
+        current_time = game_root.getPlayTime();
+
+        if (current_time >= level_control.GetLevelDatas()[current_level + 1].end_time)
+        {
+            
+            level_control.clear = true;
+            StartCoroutine(Text_Fade_In((current_level + 1) + " STAGE Clear !"));
+            //stage_cleared = true;
+            Debug.Log((current_level + 1) + "클리어 !");
+            current_level++;
+
+        }
+
+       /* if (current_level == 3)
+        {
+            SceneManager.LoadScene("BossScene");
+            SoundManager.instance.StartCoroutine("PlayBGM", "BOSS");
+        }*/
+
         this.transform.Translate(new Vector3(current_speed* Time.deltaTime, 0.0f, 0.0f));
 
         Vector3 velocity = this.GetComponent<Rigidbody>().velocity; // 속도를 설정.
         this.current_speed = this.level_control.getPlayerSpeed();
         this.check_landed(); // 착지 상태인지 체크.
+
+
+        if (this.is_landed && jump_count != 0)
+        {
+            jump_count = 0;
+        }
 
         switch (this.step)
         {
@@ -66,8 +116,10 @@ public class PlayerControl : MonoBehaviour
         this.step_timer += Time.deltaTime; // 경과 시간을 진행한다.
 
         // 버튼이 눌렸으면.
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && jump_count < 2)
         {
+            jump_count += 1;
+            SoundManager.instance.PlaySE("Jump");
             this.click_timer = 0.0f; // 타이머를 리셋.
         }
         // 그렇지 않으면.
@@ -102,20 +154,13 @@ public class PlayerControl : MonoBehaviour
                     // click_timer가 0이상, CLICK_GRACE_TIME이하라면.
                     if (0.0f <= this.click_timer && this.click_timer <= CLICK_GRACE_TIME)
                     {
-                        // 착지했다면.
-                        if (this.is_landed)
-                        {
-                            this.click_timer = -1.0f;   // 버튼이 눌려있지 않음을 나타내는 -1.0f로.
-                            this.next_step = STEP.JUMP; // 점프 상태로 한다.
-                        }
+                       
+                        this.click_timer = -1.0f;   // 버튼이 눌려있지 않음을 나타내는 -1.0f로.
+                        this.next_step = STEP.JUMP; // 점프 상태로 한다.
                     }
                     break;
-                case STEP.JUMP: // 점프 중일 때.
-                    if (this.is_landed)
-                    {
-                        // 점프 중이고 착지했다면 다음 상태를 주행 중으로 변경.
-                        this.next_step = STEP.RUN;
-                    }
+                case STEP.JUMP: // 점프 중일 때.          
+                    this.next_step = STEP.RUN;
                     break;
             }
         }
@@ -131,7 +176,7 @@ public class PlayerControl : MonoBehaviour
             {
                 case STEP.JUMP: // '점프'일 때.
                     // 최고 도달점 높이(JUMP_HEIGHT_MAX)까지 점프할 수 있는 속도를 계산.
-                    velocity.y = Mathf.Sqrt(2.0f * 9.8f * PlayerControl.JUMP_HEIGHT_MAX);
+                    velocity.y = Mathf.Sqrt(1.25f * 9.8f * PlayerControl.JUMP_HEIGHT_MAX);
                     // '버튼이 떨어졌음을 나타내는 플래그'를 클리어한다.
                     this.is_key_released = false;
                     break;
@@ -206,7 +251,7 @@ public class PlayerControl : MonoBehaviour
         do
         {
             Vector3 s = this.transform.position; // Player의 현재 위치.
-            Vector3 e = s + Vector3.down * 1.0f; // s부터 아래로 1.0f로 이동한 위치.
+            Vector3 e = s + Vector3.down * 0.5f; // s부터 아래로 1.0f로 이동한 위치.
 
             RaycastHit hit;
             // s부터 e 사이에 아무것도 없을 때. *out: method 내에서 생선된 값을 반환때 사용.
@@ -227,6 +272,7 @@ public class PlayerControl : MonoBehaviour
             }
 
             // s부터 e 사이에 뭔가 있고 JUMP 직후가 아닐 때만 아래가 실행.
+            
             this.is_landed = true;
         } while (false);
         // 루프의 탈출구.
@@ -244,4 +290,89 @@ public class PlayerControl : MonoBehaviour
         }
         return (ret);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("ClearBlock"))
+        {
+            stage_cleared = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("ClearBlock"))
+        {
+            stage_cleared = false;
+
+            clearBlockCount++;
+            if (clearBlockCount == 40)
+            {
+                level_control.level++;
+                SoundManager.instance.StartCoroutine("PlayBGM", (current_level + 1) + "STAGE");
+                Debug.Log("현재 level :" + current_level);
+            }
+
+            else if (clearBlockCount == 80)
+            {
+                level_control.level++;
+                SoundManager.instance.StartCoroutine("PlayBGM", (current_level + 1) + "STAGE");
+                Debug.Log("현재 level :" + current_level);
+            }
+
+            else if(clearBlockCount == 120)
+            {
+                level_control.level++;
+                SceneManager.LoadScene("BossScene");
+                SoundManager.instance.StartCoroutine("PlayBGM", "BOSS");
+
+            }
+        }
+    }
+
+    public void ResetJumpCount()
+    {
+        jump_count = 0;
+    }
+
+    public void Revive()
+    {
+        if (PlayerStat.Instance.GetReviveNum() != 0)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, 3.0f, this.transform.position.z);
+            this.GetComponent<Rigidbody>().AddForce(Vector3.up * 15.0f, ForceMode.Impulse);
+            SoundManager.instance.PlaySE("Revive");
+            PlayerStat.Instance.SetReviveNum(-1);
+            ResetJumpCount();
+            Debug.Log("부활 아이템이 자동적으로 사용되었으며 남은 부활 횟수는 " + PlayerStat.Instance.GetReviveNum());
+        }
+    }
+
+    public IEnumerator Text_Fade_In(string Current_Level)
+    {
+        Debug.Log(Current_Level + "클리어 해서 텍스트 이제 페이드인으로 띄울게용 !");
+        Event_Text.enabled = true;
+        Event_Text.text = Current_Level;
+
+        while (Event_Text.color.a <= 1.0f)
+        {
+            Event_Text.color = new Color(Event_Text.color.r, Event_Text.color.g, Event_Text.color.b, Event_Text.color.a + (Time.deltaTime / 2.0f));
+            yield return null;
+        }
+        
+        StartCoroutine(Text_Fade_Out());
+    }
+
+    public IEnumerator Text_Fade_Out()
+    {
+        while (Event_Text.color.a > 0.0f)
+        {
+            Event_Text.color = new Color(Event_Text.color.r, Event_Text.color.g, Event_Text.color.b, Event_Text.color.a - (Time.deltaTime / 2.0f));
+            yield return null;
+        }
+        Event_Text.enabled = false;
+    }
+
+
 }
+

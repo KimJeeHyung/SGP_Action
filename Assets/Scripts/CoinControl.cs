@@ -31,6 +31,7 @@ public class CoinControl : MonoBehaviour
         if(other.gameObject.CompareTag("Player"))
         {
             recordCollector.Coin_Num += 1;
+            SoundManager.instance.PlaySE("Coin");
             GameObject.Destroy(this.gameObject);
         }
     }

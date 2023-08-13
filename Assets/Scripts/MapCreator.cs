@@ -2,19 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Block 클래스 추가
-public class Block
-{
-    // 블록의 종류를 나타내는 열거체.
-    public enum TYPE
-    {
-        NONE = -1,  // 없음.
-        FLOOR = 0,  // 마루.
-        HOLE,       // 구멍.
-        NUM,        // 블록이 몇 종류인지 나타낸다(＝2).
-    };
-};
-
 public class MapCreator : MonoBehaviour
 {
     public static float BLOCK_WIDTH = 1.0f;     // 블록의 폭.
@@ -34,9 +21,12 @@ public class MapCreator : MonoBehaviour
     private BlockCreator block_creator;     // BlockCreator를 보관.
     private CoinCreator coin_creator;       // CoinCreator를 보관.
     private MonsterCreator monster_creator; // MonsterCreator를 보관.
+    private ShopperCreator shopper_creator;
+    private BackGroundChanger Background_Changer;
 
     public TextAsset level_data_text = null;
     private GameRoot game_root = null;
+    private StageProgress progress = null;
 
     // Start is called before the first frame update
     void Start()
@@ -47,14 +37,19 @@ public class MapCreator : MonoBehaviour
 
         this.coin_creator = this.gameObject.GetComponent<CoinCreator>();
         this.monster_creator = this.gameObject.GetComponent<MonsterCreator>();
+        this.shopper_creator = this.gameObject.GetComponent<ShopperCreator>();
 
         this.level_control = gameObject.AddComponent<LevelControl>();
         this.level_control.initialize();
 
         this.level_control.loadLevelData(this.level_data_text);
         this.game_root = this.gameObject.GetComponent<GameRoot>();
-
+        this.progress = GameObject.FindGameObjectWithTag("Progress").GetComponent<StageProgress>();
+        this.Background_Changer = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<BackGroundChanger>();
         this.player.level_control = this.level_control;
+        this.game_root.level_control = this.level_control;
+        this.progress.level_control = this.level_control;
+        this.Background_Changer.level_control = this.level_control;
     }
 
     // Update is called once per frame
@@ -106,17 +101,25 @@ public class MapCreator : MonoBehaviour
         // 지금 만들 블록에 관한 정보를 변수 current에 넣는다.
         LevelControl.CreationInfo current = this.level_control.current_block;
 
+        Vector3 on_block_position = block_position + new Vector3(0.0f, 1.0f, 0.0f);
+
         // 지금 만들 블록이 바닥이면 (지금 만들 블록이 구멍이라면)
         if (current.block_type == Block.TYPE.FLOOR)
         {
-            Vector3 on_block_position = block_position + new Vector3(0.0f, 1.0f, 0.0f);
-
+   
             // block_position의 위치에 블록을 실제로 생성.
             this.block_creator.createBlock(block_position);
             if (!this.createMonster(on_block_position))
             {
                 this.coin_creator.createCoin(on_block_position);
             }
+        }
+        else if (current.block_type == Block.TYPE.CLEARFLOOR)
+        {
+            this.block_creator.createClearBlock(block_position);
+            if (block_creator.block_count == 10)
+                this.shopper_creator.createShopper(on_block_position);
+
         }
         else
         {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelData
 {
@@ -34,8 +35,8 @@ public class LevelData
 public class LevelControl : MonoBehaviour
 {
     private List<LevelData> level_datas = new List<LevelData>();
-    public int HEIGHT_MAX = 20;
-    public int HEIGHT_MIN = -4;
+    public int HEIGHT_MAX = 2;
+    public int HEIGHT_MIN = -2;
 
     // 만들어야 할 블록에 관한 정보를 모은 구조체.
     public struct CreationInfo
@@ -52,17 +53,7 @@ public class LevelControl : MonoBehaviour
     public int block_count = 0;         // 생성한 블록의 총 수.
     public int level = 0;               // 난이도.
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    public bool clear = false;
 
     //프로필 노트에 실제로 기록하는 처리를 한다.
     private void clear_next_block(ref CreationInfo block)
@@ -84,23 +75,6 @@ public class LevelControl : MonoBehaviour
         this.clear_next_block(ref this.previous_block);
         this.clear_next_block(ref this.current_block);
         this.clear_next_block(ref this.next_block);
-    }
-    // ref: 참조에 의해 인수를 전달할 때는 호출하는 쪽과 호출되는 쪽 모두 인수에 필요
-
-    private void update_level(ref CreationInfo current, CreationInfo previous)
-    {
-        switch (previous.block_type)
-        {
-            case Block.TYPE.FLOOR: // 이번 블록이 바닥일 경우.
-                current.block_type = Block.TYPE.HOLE; // 다음 번은 구멍을 만든다.
-                current.max_count = 5; // 구멍은 5개 만든다.
-                current.height = previous.height; // 높이를 이전과 같게 한다.
-                break;
-            case Block.TYPE.HOLE: // 이번 블록이 구멍일 경우.
-                current.block_type = Block.TYPE.FLOOR; // 다음은 바닥 만든다.
-                current.max_count = 10; // 바닥은 10개 만든다.
-                break;
-        }
     }
 
     // *Update()가 아님. create_floor_block() 메서드에서 호출
@@ -134,7 +108,7 @@ public class LevelControl : MonoBehaviour
                 continue; // 아래 처리는 하지 않고 반복문의 처음으로 점프한다.
             };
 
-            Debug.Log(line);                // 행의 내용을 디버그 출력한다.
+            //Debug.Log(line);                // 행의 내용을 디버그 출력한다.
             string[] words = line.Split();  // 행 내의 워드를 배열에 저장한다.
             int n = 0;
 
@@ -202,22 +176,30 @@ public class LevelControl : MonoBehaviour
         }
     }
 
+    // ref: 참조에 의해 인수를 전달할 때는 호출하는 쪽과 호출되는 쪽 모두 인수에 필요
     // 새 인수 passage_time으로 플레이 경과 시간을 받는다.
     private void update_level(ref CreationInfo current, CreationInfo previous, float passage_time)
     {
-        // 레벨 1~레벨 5를 반복한다.
-        float local_time = Mathf.Repeat(passage_time, this.level_datas[this.level_datas.Count - 1].end_time);
-        
-        // 현재 레벨을 구한다.
-        int i;
-        for (i = 0; i < this.level_datas.Count - 1; i++)
+        if (SceneManager.GetActiveScene().buildIndex == 2)
         {
-            if (local_time <= this.level_datas[i].end_time)
+            // 레벨 1~레벨 5를 반복한다.
+            float local_time = Mathf.Repeat(passage_time, this.level_datas[this.level_datas.Count - 1].end_time);
+
+            // 현재 레벨을 구한다.
+            int i;
+            for (i = 0; i < this.level_datas.Count - 1; i++)
             {
-                break;
+                if (local_time <= this.level_datas[i].end_time)
+                {
+                    break;
+                }
             }
+            //this.level = i;
         }
-        this.level = i;
+        else if(SceneManager.GetActiveScene().buildIndex == 3)
+        {
+            this.level = 3;
+        }
 
         current.block_type = Block.TYPE.FLOOR;
         current.max_count = 1;
@@ -236,10 +218,26 @@ public class LevelControl : MonoBehaviour
                     current.max_count = Random.Range(level_data.hole_count.min, level_data.hole_count.max);
                     current.height = previous.height; // 높이를 이전과 같이 한다.
                     break;
+                case Block.TYPE.CLEARFLOOR:
+                    clear = false;
+                    current.block_type = Block.TYPE.HOLE; // 이번엔 구멍을 만든다.
+                    // 구멍 크기의 최솟값~최댓값 사이의 임의의 값.
+                    current.max_count = Random.Range(level_data.hole_count.min, level_data.hole_count.max);
+                    current.height = previous.height; // 높이를 이전과 같이 한다.
+                    //this.level++;
+                    break;
                 case Block.TYPE.HOLE: // 이전 블록이 구멍인 경우.
-                    current.block_type = Block.TYPE.FLOOR; // 이번엔 바닥을 만든다.
-                    // 바닥 길이의 최솟값~최댓값 사이의 임의의 값.
-                    current.max_count = Random.Range(level_data.floor_count.min, level_data.floor_count.max);
+                    if (clear == true)
+                    {
+                        current.block_type = Block.TYPE.CLEARFLOOR;
+                        current.max_count = 20;
+                    }
+                    else
+                    {
+                        current.block_type = Block.TYPE.FLOOR; // 이번엔 바닥을 만든다.
+                        // 바닥 길이의 최솟값~최댓값 사이의 임의의 값.
+                        current.max_count = Random.Range(level_data.floor_count.min, level_data.floor_count.max);
+                    }
                     // 바닥 높이의 최솟값과 최댓값을 구한다.
                     int height_min = previous.height + level_data.height_diff.min;
                     int height_max = previous.height + level_data.height_diff.max;
@@ -256,5 +254,10 @@ public class LevelControl : MonoBehaviour
     public float getPlayerSpeed()
     {
         return (this.level_datas[this.level].player_speed);
+    }
+
+    public List<LevelData> GetLevelDatas()
+    {
+        return level_datas;
     }
 }

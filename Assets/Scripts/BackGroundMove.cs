@@ -5,6 +5,7 @@ using UnityEngine;
 public class BackGroundMove : MonoBehaviour
 {
 
+   
     public float scrollSpeed = 1.2f;
     private Material mat;
 

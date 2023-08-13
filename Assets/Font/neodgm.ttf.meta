@@ -1,21 +1,3 @@
-fileFormatVersion: 2
-guid: 45a952f2d3094aa439688e226d0d40c3
-TrueTypeFontImporter:
-  externalObjects: {}
-  serializedVersion: 4
-  fontSize: 16
-  forceTextureCase: -2
-  characterSpacing: 0
-  characterPadding: 1
-  includeFontData: 1
-  fontNames:
-  - NeoDunggeunmo
-  fallbackFontReferences: []
-  customCharacters: 
-  fontRenderingMode: 0
-  ascentCalculationMode: 1
-  useLegacyBoundsCalculation: 0
-  shouldRoundAdvanceValue: 1
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:1ccdd0aac1887c107f3fae3462c57b475dfac97f706a5d2aea6be2b7f861e179
+size 478
